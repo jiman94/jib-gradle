@@ -29,6 +29,12 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
+}
+
 jib {
     from {
         image = "openjdk:alpine"
