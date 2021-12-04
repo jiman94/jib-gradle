@@ -1,0 +1,50 @@
+plugins {
+    id 'org.springframework.boot' version '2.5.6'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+    id "com.google.cloud.tools.jib" version "3.1.4"
+}
+
+ext {
+    BUILD_VERSION = new Date().format("yyyyMMddHHmmss")
+}
+
+group = 'oss.pilot'
+version = '1.0.1'
+sourceCompatibility = '1.8'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+}
+
+jib {
+    from {
+        image = "openjdk:alpine"
+    }
+    to {
+        image = "jiman94/jib-example-case3"
+        tags = ["${project.version}".toString(), "${BUILD_VERSION}".toString()]
+        credHelper = "pass"
+    }
+    container {
+        mainClass = "gaemi.jib.excample.JibExampleApplication"
+        ports = ["8080"]
+        volumes = ["/tmp"]
+        environment = [
+                "JAVA_TOOL_OPTIONS": "-Xmx2048m -XX:+UseG1GC",
+                "SPRING_PROFILES_ACTIVE": "dev",
+                "TZ": "Asia/Seoul"
+        ]
+    }
+}
